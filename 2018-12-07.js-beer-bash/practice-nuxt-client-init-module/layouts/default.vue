@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="main" :class="{'loading': $store.state.isLoading}">
     <Navbar />
     <nuxt/>
   </div>
@@ -59,6 +59,15 @@ html {
 .button--grey:hover {
   color: #fff;
   background-color: #35495e;
+}
+
+.main {
+  transition: all 0.3s;
+  opacity: 1
+}
+
+.loading {
+  opacity: 0
 }
 </style>
 

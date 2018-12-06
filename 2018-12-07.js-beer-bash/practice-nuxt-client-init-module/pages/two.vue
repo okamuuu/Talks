@@ -1,7 +1,7 @@
 <template>
   <div class="one-container" style="display:flex;flex-direction:column;justify-content:center;">
-    <h1 class="title" v-if="isClient()">One Client</h1>
-    <h1 class="title" v-else>One Server</h1>
+    <h1 class="title" v-if="isClient()">Two Client</h1>
+    <h1 class="title" v-else>Two Server</h1>
   </div>
 </template>
 

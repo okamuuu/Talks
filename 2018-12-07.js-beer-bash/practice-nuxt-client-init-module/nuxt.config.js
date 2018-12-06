@@ -18,7 +18,8 @@ module.exports = {
   */
   loading: { color: '#3B8070' },
   modules: [
-    '@nuxtjs/bulma'
+    '@nuxtjs/bulma',
+    'nuxt-client-init-module'
   ],
   /*
   ** Build configuration

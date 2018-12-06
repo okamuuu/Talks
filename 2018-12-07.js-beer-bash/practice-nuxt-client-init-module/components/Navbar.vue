@@ -17,7 +17,7 @@
       <div class="navbar-end">
       
         <nuxt-link class="navbar-item is-size-6" to="/one">One</nuxt-link>
-        <nuxt-link class="navbar-item is-size-6" to="/tow">Two</nuxt-link>
+        <nuxt-link class="navbar-item is-size-6" to="/two">Two</nuxt-link>
         <nuxt-link class="navbar-item is-size-6" to="/three">Three</nuxt-link>
   
       </div>
