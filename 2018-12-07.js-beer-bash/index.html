@@ -51,9 +51,24 @@ class: center, middle
 
 # お話の前に
 
-Nuxt.js は 画面を reload すると、レンダリング直後にJS側(仮想DOM)がもう一度 rendering している
+Nuxt.js の SSR mode でユーザーが 画面を reload した場合の挙動について説明します
+
+---
+
+# こういう挙動をしています
+
+* SSR で HTML がレンダリングされてブラウザはそれを読み込む
+* ブラウザに画面が表示され始める
+* しばらくするとブラウザが Javascript を読み終える
+* そのタイミングで今度はJS がもう一度 rendering
 
 https://practice-nuxt-client-init-module-vpibzdenhn.now.sh/one
+
+---
+
+class: center, middle
+
+# 本題に入ります
 
 ---
 
