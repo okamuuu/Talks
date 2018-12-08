@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Contentful - Y8 in 城</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; color: hsl(0, 0%, 4%) }
+      h1, h2, h3 {
+        font-size: 48px;
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      p, ol, ul {
+        font-size: 32px;
+      }
+      .remark-code, .remark-inline-code { 
+        font-size: 26px;
+        font-family: 'Ubuntu Mono'; 
+      }
+      .red { color: hsl(348, 100%, 61%) }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Contentful を使ってみました
+
+岡山城 天守閣<br />
+2018-09-29<br />
+okamuuu
+
+---
+
+# 自己紹介
+
+好きな言語
+
+---
+
+class: center, middle
+
+# あくまで個人の感想です。
+
+---
+
+# Contentful とは?
+
+いわゆる Headless CMS です。
+
+* Contentful
+* ButterCMS
+* storyblok
+* GraphCMS
+* など
+
+---
+
+## CMS <span class="red">vs</span> Headless CMS
+
+ざっくり説明すると
+
+* Response を HTML で返すのが CMS
+* Response を JSON で返すのが Headless CMS
+
+わかりやすく言うと
+
+* WordPress は CMS
+* Contentful は Headless CMS
+
+---
+
+# Contentful の特徴
+
+* 型を自由に定義できる
+* 型に沿ったオブジェクトを出し入れできる
+* CRUD 画面が現れる
+* REST API も生える
+* 位置情報検索もできる
+* <span class="red">個人で開発する時にとても便利</span>
+
+---
+
+# Contentful を使ってみた感想
+
+* CRUD 画面が自動生成される。気持ちいい。
+* API にちょっと癖がある。
+* リレーションできない?
+* 通信回数がN+1にならないように工夫が必要?
+
+---
+
+class: center, middle
+
+# CRUD 画面が自動生成される
+
+---
+
+# CRUD 画面が自動生成される
+
+* users という型を管理画面で作成する
+* この時点で CRUD 画面が用意される。
+* そこに user object を追加する
+* `/entries?content_type=users` で一覧取得できる
+
+---
+
+class: center, middle
+
+# API にちょっと癖がある
+
+---
+
+# API にちょっと癖がある
+
+期待している Response
+
+```
+{
+  "id": 2073765716208129
+  "name": "神牛前3丁目",
+  "state: "東京",
+}
+```
+
+---
+
+# API にちょっと癖がある
+
+```
+{
+  "fields": {
+    "id": {
+      "en-US": 2073765716208129
+    },
+    "name": {
+      "en-US": "神牛前3丁目"
+    },
+    "state": {
+      "en-US": "東京"
+    }
+  },
+  "sys": {
+    "id": "5KsDBWseXY6QegucYAoacS",
+    "type": "Entry",
+    "createdAt": "2016-12-20T10:43:35.772Z",
+    "updatedAt": "2016-12-20T10:43:35.772Z",
+    "revision": 1
+  }
+}
+```
+---
+
+class: center, middle
+
+# リレーションできない?
+
+---
+
+# リレーションできない?
+
+Entry 取得した場合、関連する型の sys.id しか取得できない。ドキュメントには include を指定するように書いているが...
+
+```
+// console.log(user.fields.status)
+{ 
+  sys: { 
+    type: 'Link', 
+    linkType: 'Entry', 
+    id: '6Bw3NLBDJ6KEyOc2YwucYk'
+  } 
+}
+```
+
+---
+
+class: center, middle
+
+# 通信回数がN+1にならないようにする 
+
+---
+
+# 通信回数がN+1にならないようにする 
+
+* リレーションができないのであれば、の話ですが
+* 一覧表示画面を実装するときにあえて非正規化する場面がでてくるかも
+* Promise.all してももっさりしがちなのでできれば API の向こう側で解決したい
+
+---
+
+# まとめ
+
+* Contentful はかなり便利だった
+* なんだけどリレーションができない?
+* ドキュメントを分かりやすくして欲しい
+* example がもっと欲しい
+* Cognito と Contentful があれば色々できる予感
+
+---
+
+class: center, middle
+
+# おしまい
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>

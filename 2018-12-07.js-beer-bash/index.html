@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>第５回 JS ビアバッシュ 初心者勉強会 in西新宿</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; color: hsl(0, 0%, 4%) }
+      h1, h2, h3 {
+        font-size: 48px;
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      p, ol, ul {
+        font-size: 32px;
+      }
+      .remark-code, .remark-inline-code { 
+        font-size: 26px;
+        font-family: 'Ubuntu Mono'; 
+      }
+      .red { color: hsl(348, 100%, 61%) }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# nuxt-client-init-module
+
+第５回JS ビアバッシュ 初心者勉強会 in西新宿<br />
+2018-12-08<br />
+okamuuu
+
+---
+
+class: center, middle
+
+# こんにちは
+
+---
+
+# 最近 Nuxt.js を使っています
+
+お客様が SSR したいっぽいので後から言われても困らないように Nuxt.js を選定しました。
+
+---
+
+# お話の前に
+
+Nuxt.js は 画面を reload すると、レンダリング直後にJS側(仮想DOM)がもう一度 rendering している
+
+https://practice-nuxt-client-init-module-vpibzdenhn.now.sh/one
+
+---
+
+# とある問題を解決したい
+
+* CSS の適用が遅れて画面のデザインが一瞬崩れる
+* デザインが崩れるのは一瞬だけ
+* fade in させよう 
+
+---
+
+# 以下のようなコードを書いた
+
+```javascript
+async nuxtServerInit (store, context) {
+  setTimeout(function() {
+    store.state.isLoading = false
+  }, 500)
+}
+```
+
+isLoading が true から false になったら loading 完了にする
+
+https://practice-nuxt-client-init-module-vpibzdenhn.now.sh/two
+
+---
+
+# いつまでも isLoading 
+
+```javascript
+async nuxtServerInit (store, context) {
+  setTimeout(function() {
+    store.state.isLoading = false
+  }, 500)
+}
+```
+
+* nuxtServerInit は実行直後の state を元に HTML を書き出している。
+* その後に setTimeout で state 変えても意味がない。
+* isLoading を false にする処理はここ以外にないので永遠に isLoading のまま
+
+---
+
+# nuxtClientInit が欲しい
+
+* Nuxt.js は client 側で最初の一回だけ呼び出す関数を用意していません。
+* nuxt-client-init-module を使うといいです
+
+```javascript
+async nuxtServerInit (store, context) { ... },
+async nuxtClientInit (store, context) {
+  setTimeout(function() {
+    store.state.isLoading = false
+  }, 500)
+}
+```
+
+https://practice-nuxt-client-init-module-vpibzdenhn.now.sh/three
+
+---
+
+# まとめ
+
+* Nuxt.js は SSR した直後に、すぐに仮想 DOM でレンダリングをやり直している
+* nuxtClientInit はこのタイミングで一回だけ実行される
+* とりあえず頭の片隅に置いておけば良い程度のお話です
+
+---
+
+class: center, middle
+
+# おしまい
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
