@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>We Are JavaScripters! @30th【初心者歓迎LT大会】</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { 
+        font-size: 18px; 
+        font-family: 'Droid Serif';
+        color: hsl(0, 0%, 4%) 
+      }
+      h1, h2, h3 {
+        font-size: 48px;
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      p, ol, ul {
+        font-size: 32px;
+      }
+      table {
+        border-collapse:  collapse;
+      }
+      th,td {
+        font-size: 24px;
+        border: solid 1px;
+        padding: 10px;
+      }
+      strong, em {
+        background: linear-gradient(transparent 0%, #c1e0ff 0%);
+        font-style: normal;
+        font-weight: bold; 
+      }
+
+      .is-size-1 { font-size: 3rem; }
+      .is-size-2 { font-size: 2.5rem; }
+
+      .remark-code, .remark-inline-code { 
+        font-size: 26px;
+        font-family: 'Ubuntu Mono'; 
+      }
+
+      .remark-inline-code { background: #EEE; }
+      .red { color: hsl(348, 100%, 61%) }
+
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Expo と Firebase Authentication
+
+We Are JavaScripters! @30th<br />
+2019-03-22<br />
+okamuuu
+
+---
+
+class: center, middle
+
+# こんにちは
+
+---
+
+## Expo と Firebase Authentication のお話です
+
+Firebase Authentication を React Native で実装しようとすると大変だったのでそこで得た知見を共有しつつ、<strong>もっといい解決策があればご教授頂きたい</strong>です。
+
+---
+
+## あらすじ
+
+* 少人数の開発チームでプロダクトをつくりたいので Expo を使いたい
+* Facebook, Google, Github, Twitter でログインする処理が必要
+* Expo + Firebase Authentication を使えば簡単...?
+
+---
+
+## 実は意外と大変だった
+
+* React Native は JavaScript だけどブラウザ上で動くわけでは無い
+* Firebase SDK に丸ごとお任せしたかったが<em>そういうわけにはいかなかった</em>
+* OAuth の事を思い出す必要があった
+* サーバーサイドでの実装が必要になった
+
+---
+
+## 特に伝えたいこと
+
+* `React Native` と `Firebase` と `OAuth` と `サーバーサイド` の知識が必要になる
+* 何も知らずに導入しようとすると<em>意外とコストがかかります</em>
+* そのあたりを Expo + Firebase Authentication を考えている人たちは参考にしてください
+* すでに使っている人たちでもっといい方法あったら<strong>是非教えてください</strong>
+
+---
+
+class: center, middle
+
+## 本題
+
+---
+
+## 少人数の開発チームでプロダクトをつくりたい
+
+* Expo を使いたい
+* <em>クロスプラットフォーム</em>で開発ができる
+* Xcode に触らなくても app-store に申請手続を行う事ができる
+* あくまで Javascript の Update なので app-store での審査が不要らしい
+
+---
+
+## 認証処理の実装は思った以上に手間がかかる
+
+* Firebase Authentication を使いたい
+* 仮会員登録、メール認証、本会員登録の処理は面倒臭い
+* OAuth 面倒臭い
+* ユーザーが端末を紛失した場合にどうやってログアウトさせるのか
+* 大した情報保持して無いから強制ログアウトの仕組みを<em>提供しませんとは言えない</em>
+
+---
+
+## WEB + Firebase Authentication
+
+Firebase Authentication SDK を使えば認証処理を全て委ねることができるはず...
+
+```javascript
+// event を設定する
+firebase.auth().onAuthStateChanged(user => { ... })
+
+// ログインする
+var provider = new firebase.auth.GoogleAuthProvider();
+firebase.auth().signInWithPopup(provider)
+
+// ログアウトする
+firebase.auth().signOut()
+```
+
+---
+
+## React Native + Firebase Authentication
+
+* `signInWithPopup` も `signInWithRedirect` もつかえない
+* 代わりに `signInWithCredential` を使う事になる
+
+```javascript
+var credential = getCredential() // ここを自分で実装する必要がある
+firebase.auth().signInAndRetrieveDataWithCredential(credential);
+```
+
+credential をつくるには各プロバイダーの <em>access token</em>を取得する必要がある。
+
+---
+
+## Access Token を取得する
+
+* Facebook に関しては Expo が良きにはからってくれる
+* Google と Github は OAuth 2.0
+* Twitter は OAuth 1.0
+
+---
+
+class: center, middle
+
+## access token の前に OAuth についておさらい
+
+---
+
+## OAuth のおさらい
+
+access token についてお話しする前に OAuth 2.0 と OAuth 1.0 の違いについてあやふやな人が多いと思います。
+
+---
+
+## OAuth 2.0 と OAuth 1.0 の違い
+
+* OAuth 2.0 <em>チョット</em>メンドクサイ
+* OAuth 1.0 <em>モット</em>メンドクサイ
+
+注: 個人の見解です
+
+---
+
+## OAuth 2.0 と OAuth 1.0 の違い
+
+1.0 には以下の問題点があります
+
+* 過度な認証フローと複雑な署名
+* モバイルアプリへの対応
+* スケール時のパフォーマンス
+
+以下の URL に詳しい記事を書いてくれている人がいますので<em>ご安心ください。</em>
+
+https://murashun.jp/blog/20150920-01.html
+
+---
+
+class: center, middle
+
+## 閑話休題
+
+access token を取得する必要がある、という話題に戻ります
+
+---
+
+## Facebook(Expo)
+
+Facebook に関しては Expo が良きにはからってくれる
+
+```javascript
+  async handleFacebookLogin() {
+
+    const { type, token } = await Facebook.logInWithReadPermissionsAsync(
+      FACEBOOK_APP_ID,
+      { permissions: ['public_profile'] }
+    )
+
+    if (type !== 'success') {
+      return
+    }
+    const credential = firebase.auth.FacebookAuthProvider.credential(token)
+    firebase.auth().signInAndRetrieveDataWithCredential(credential)
+  }
+```
+
+---
+
+## Google(Expo)
+
+```javascript
+  async handleGoogleLogin() {
+    // 認可コードを取得する。Expo が手助けしてくれる
+    const result = await AuthSession.startAsync({
+      authUrl:
+        `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `&client_id=${GOOGLE_CLIENT_ID}` +
+        `&redirect_uri=${REDIRECT_URL}` +
+        `&response_type=code` +
+        `&access_type=offline` +
+        `&scope=profile`,
+    });
+
+    // 認可コードをアクセストークンに交換する。自分で実装する必要がある
+    const { id_token } = await createTokenWithCode('google', result.params.code)
+
+    var credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+    firebase.auth().signInAndRetrieveDataWithCredential(credential);
+  }
+```
+
+---
+
+## Google(Node.js)
+
+```javascript
+app.post('/auth/google', async (req, res) => {
+  // 認可コードを access token と交換する処理は秘密鍵が必要
+  async function createTokenWithGoogleCode(code, redirect_uri) {
+    const url = `https://www.googleapis.com/oauth2/v4/token`
+    const res = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        client_id: config.GOOGLE.CLIENT_ID,
+        client_secret: config.GOOGLE.CLIENT_SECRET,
+        redirect_uri,
+        grant_type: 'authorization_code'
+      })
+    });
+    return await res.json()
+  }
+  return res.json(await createTokenWithGoogleCode(req.body.code, req.body.redirect_uri))
+```
+
+---
+
+class: center, middle
+
+## Github, Twitter に関しては割愛します
+
+Qiita にソースコードを載せてあります。
+
+---
+
+# まとめ
+
+Expo で Firebase Authentication を実装しようとすると <em>React Native</em> と <em>Firebase</em> と<em>サーバーサイドで OAuth の認証処理</em>を実装できるエンジニアが必要です
+
+---
+
+# まとめ
+
+当事者になってしまった人場合は以下の記事を参考にして何とか乗り切ってください。
+
+https://qiita.com/okamuuu/items/6da12f295c3b8a7bc3d8
+
+
+---
+
+class: center, middle
+
+## 私にお金払う方法もあります。
+
+---
+
+class: center, middle
+
+## ご静聴ありがとうございました
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({ratio: "16:9"});
+    </script>
+  </body>
+</html>
