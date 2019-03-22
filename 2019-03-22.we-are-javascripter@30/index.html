@@ -13,8 +13,13 @@
         font-family: 'Droid Serif';
         color: hsl(0, 0%, 4%) 
       }
-      h1, h2, h3 {
-        font-size: 48px;
+      h1 {
+        font-size: 58px;
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      h2, h3 {
+        font-size: 40px;
         font-family: 'Yanone Kaffeesatz';
         font-weight: normal;
       }
@@ -39,7 +44,7 @@
       .is-size-2 { font-size: 2.5rem; }
 
       .remark-code, .remark-inline-code { 
-        font-size: 26px;
+        font-size: 24px;
         font-family: 'Ubuntu Mono'; 
       }
 
@@ -243,7 +248,6 @@ Facebook に関しては Expo が良きにはからってくれる
         `&access_type=offline` +
         `&scope=profile`,
     });
-
     // 認可コードをアクセストークンに交換する。自分で実装する必要がある
     const { id_token } = await createTokenWithCode('google', result.params.code)
 
@@ -258,6 +262,7 @@ Facebook に関しては Expo が良きにはからってくれる
 
 ```javascript
 app.post('/auth/google', async (req, res) => {
+  const { code, redirect_uri } = req.body
   // 認可コードを access token と交換する処理は秘密鍵が必要
   async function createTokenWithGoogleCode(code, redirect_uri) {
     const url = `https://www.googleapis.com/oauth2/v4/token`
@@ -273,7 +278,7 @@ app.post('/auth/google', async (req, res) => {
     });
     return await res.json()
   }
-  return res.json(await createTokenWithGoogleCode(req.body.code, req.body.redirect_uri))
+  return res.json(await createTokenWithGoogleCode(code, redirect_uri))
 ```
 
 ---
