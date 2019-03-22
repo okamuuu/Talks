@@ -106,32 +106,46 @@ Firebase Authentication を React Native で実装しようとすると大変だ
 
 class: center, middle
 
-## 本題
+# 本題
 
 ---
+
+class: center, middle
+
+## React Native と Firebase Authentication を選んだ理由
+
+---
+
 
 ## 少人数の開発チームでプロダクトをつくりたい
 
 * Expo を使いたい
 * <em>クロスプラットフォーム</em>で開発ができる
 * Xcode に触らなくても app-store に申請手続を行う事ができる
-* あくまで Javascript の Update なので app-store での審査が不要らしい
+* メンテナンスが<em>属人化</em>されるのを防げる予感
 
 ---
 
 ## 認証処理の実装は思った以上に手間がかかる
 
-* Firebase Authentication を使いたい
 * 仮会員登録、メール認証、本会員登録の処理は面倒臭い
 * OAuth 面倒臭い
 * ユーザーが端末を紛失した場合にどうやってログアウトさせるのか
-* 大した情報保持して無いから強制ログアウトの仕組みを<em>提供しませんとは言えない</em>
+* ちゃんとしようとすると意外と面倒くさいことに気付き始める
+* これらの実装をハンドリングする自信ない
+* Firebase Authentication に<em>お任せしたい</em>
+
+---
+
+class: center, middle
+
+# WEB の場合は簡単だった
 
 ---
 
 ## WEB + Firebase Authentication
 
-Firebase Authentication SDK を使えば認証処理を全て委ねることができるはず...
+SDK を使えば認証処理を全て委ねることができた
 
 ```javascript
 // event を設定する
@@ -144,6 +158,11 @@ firebase.auth().signInWithPopup(provider)
 // ログアウトする
 firebase.auth().signOut()
 ```
+---
+
+class: center, middle
+
+# React Native の場合
 
 ---
 
@@ -161,11 +180,13 @@ credential をつくるには各プロバイダーの <em>access token</em>を�
 
 ---
 
-## Access Token を取得する
+## 各プロバイダーのAccess Token を取得するには?
 
 * Facebook に関しては Expo が良きにはからってくれる
 * Google と Github は OAuth 2.0
 * Twitter は OAuth 1.0
+
+というわけで実際に実装が必要だったのは Google, Github, Twitter
 
 ---
 
@@ -239,6 +260,8 @@ Facebook に関しては Expo が良きにはからってくれる
 ## Google(Expo)
 
 ```javascript
+  const REDIRECT_URL = AuthSession.getRedirectUrl()
+
   async handleGoogleLogin() {
     // 認可コードを取得する。Expo が手助けしてくれる
     const result = await AuthSession.startAsync({
