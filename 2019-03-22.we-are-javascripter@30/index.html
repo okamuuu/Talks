@@ -217,6 +217,8 @@ access token を取得する必要がある、という話題に戻ります
 Facebook に関しては Expo が良きにはからってくれる
 
 ```javascript
+  import { AuthSession, Facebook } from 'Expo'
+
   async handleFacebookLogin() {
 
     const { type, token } = await Facebook.logInWithReadPermissionsAsync(
